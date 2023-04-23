@@ -68,7 +68,7 @@ class FetchingSettings(ConfigurationBase):
     location_query: str = "New York"
     forecast_days: int = 10
     historical_date: str = "2022-09-09"
-    continue_on_failure: bool = True
+    continue_on_failure: bool = False
 
 
 class LoadType(str, Enum):
