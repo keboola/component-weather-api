@@ -1,0 +1,202 @@
+{
+  "name": "weather_hourly",
+  "description": "",
+  "primary_keys": [
+    "latitude",
+    "longitude",
+    "date",
+    "time"
+  ],
+  "fields": [
+    {
+      "name": "latitude",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
+      "name": "longitude",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
+      "name": "date",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "time",
+      "description": "",
+      "base_type": "STRING"
+    },
+        {
+      "name": "location_name",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "condition",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "time_epoch",
+      "description": "",
+      "base_type": "INTEGER"
+    },
+    {
+      "name": "temp_c",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
+      "name": "temp_f",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
+      "name": "is_day",
+      "description": "",
+      "base_type": "INTEGER"
+    },
+    {
+      "name": "wind_mph",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
+      "name": "wind_kph",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
+      "name": "wind_degree",
+      "description": "",
+      "base_type": "INTEGER"
+    },
+    {
+      "name": "wind_dir",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "pressure_mb",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
+      "name": "pressure_in",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
+      "name": "precip_mm",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
+      "name": "precip_in",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
+      "name": "humidity",
+      "description": "",
+      "base_type": "INTEGER"
+    },
+    {
+      "name": "cloud",
+      "description": "",
+      "base_type": "INTEGER"
+    },
+    {
+      "name": "feelslike_c",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
+      "name": "feelslike_f",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
+      "name": "windchill_c",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
+      "name": "windchill_f",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
+      "name": "heatindex_c",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
+      "name": "heatindex_f",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
+      "name": "dewpoint_c",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
+      "name": "dewpoint_f",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
+      "name": "will_it_rain",
+      "description": "",
+      "base_type": "INTEGER"
+    },
+    {
+      "name": "chance_of_rain",
+      "description": "",
+      "base_type": "INTEGER"
+    },
+    {
+      "name": "will_it_snow",
+      "description": "",
+      "base_type": "INTEGER"
+    },
+    {
+      "name": "chance_of_snow",
+      "description": "",
+      "base_type": "INTEGER"
+    },
+    {
+      "name": "vis_km",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
+      "name": "vis_miles",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
+      "name": "gust_mph",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
+      "name": "gust_kph",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
+      "name": "uv",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
+      "name": "extraction_timestamp",
+      "description": "",
+      "base_type": "STRING"
+    }
+  ]
+}

@@ -1,0 +1,136 @@
+{
+  "name": "weather_daily",
+  "description": "",
+  "primary_keys": [
+    "latitude",
+    "longitude",
+    "date"
+  ],
+  "fields": [
+    {
+      "name": "latitude",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
+      "name": "longitude",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
+      "name": "date",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "location_name",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "maxtemp_c",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
+      "name": "maxtemp_f",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
+      "name": "mintemp_c",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
+      "name": "mintemp_f",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
+      "name": "avgtemp_c",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
+      "name": "avgtemp_f",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
+      "name": "maxwind_mph",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
+      "name": "maxwind_kph",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
+      "name": "totalprecip_mm",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
+      "name": "totalprecip_in",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
+      "name": "totalsnow_cm",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
+      "name": "avgvis_km",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
+      "name": "avgvis_miles",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
+      "name": "avghumidity",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
+      "name": "daily_will_it_rain",
+      "description": "",
+      "base_type": "INTEGER"
+    },
+    {
+      "name": "daily_chance_of_rain",
+      "description": "",
+      "base_type": "INTEGER"
+    },
+    {
+      "name": "daily_will_it_snow",
+      "description": "",
+      "base_type": "INTEGER"
+    },
+    {
+      "name": "daily_chance_of_snow",
+      "description": "",
+      "base_type": "INTEGER"
+    },
+    {
+      "name": "condition",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "uv",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
+      "name": "extraction_timestamp",
+      "description": "",
+      "base_type": "STRING"
+    }
+  ]
+}

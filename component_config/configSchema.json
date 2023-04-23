@@ -1,19 +1,151 @@
 {
   "type": "object",
   "title": "extractor configuration",
-  "required": [
-    "print_hello"
-  ],
+  "required": [],
   "properties": {
-    "print_hello": {
-      "type": "boolean",
-      "title": "Print Hello",
-      "propertyOrder": 1
+    "authentication": {
+      "type": "object",
+      "title": "Authentication Settings",
+      "properties": {
+        "#api_token": {
+          "type": "string",
+          "format": "password",
+          "title": "API Token",
+          "description": "API token from you Pirate Weather account",
+          "propertyOrder": 10
+        },
+        "test_connection": {
+          "type": "button",
+          "format": "test-connection",
+          "propertyOrder": 60
+        }
+      },
+      "propertyOrder": 10
     },
-    "debug": {
-      "type": "boolean",
-      "title": "Debug",
-      "propertyOrder": 2
+    "fetching_settings": {
+      "type": "object",
+      "title": "Fetching Settings",
+      "properties": {
+        "fetch_parameter_from": {
+          "title": "Parameters From",
+          "description": "Select which way you prefer to input the fetching parameter, either by inputting them via the configuration or via an input table.",
+          "type": "string",
+          "format": "select",
+          "required": true,
+          "enum": [
+            "config_parameters",
+            "input_table"
+          ],
+          "options": {
+            "enum_titles": [
+              "Configuration Parameters",
+              "Using An Input Table"
+            ]
+          },
+          "default": "config_parameters",
+          "propertyOrder": 10
+        },
+        "request_type": {
+          "type": "string",
+          "format": "select",
+          "title": "Request Type",
+          "default": "si",
+          "required": true,
+          "enum": [
+            "forecast",
+            "history"
+          ],
+          "options": {
+            "enum_titles": [
+              "Forecast",
+              "History"
+            ]
+          },
+          "propertyOrder": 20
+        },
+        "location_query": {
+          "title": "Location",
+          "type": "string",
+          "required": true,
+          "description": "Query parameter for location. It could be Latitude and Longitude (Decimal degree) e.g 48.8567,2.3508, or city name e.g. Paris",
+          "default": "New York",
+          "propertyOrder": 30,
+          "options": {
+            "dependencies": {
+              "fetch_parameter_from": "config_parameters"
+            }
+          }
+        },
+        "forecast_days": {
+          "title": "Forecast Days",
+          "type": "integer",
+          "required": true,
+          "description": "Number of days of forecast required.",
+          "minimum": 1,
+          "maximum": 14,
+          "default": "10",
+          "propertyOrder": 40,
+          "options": {
+            "dependencies": {
+              "fetch_parameter_from": "config_parameters",
+              "request_type": "forecast"
+            }
+          }
+        },
+        "historical_date": {
+          "title": "Historical Date",
+          "type": "string",
+          "required": true,
+          "description": "Date to fetch historical data from, either exact date in YYYY-MM-DD format or relative date e.g: last week.",
+          "default": "2022-09-09",
+          "propertyOrder": 50,
+          "options": {
+            "dependencies": {
+              "fetch_parameter_from": "config_parameters",
+              "request_type": "history"
+            }
+          }
+        },
+        "continue_on_failure": {
+          "title": "Continue On Failure",
+          "type": "boolean",
+          "format": "checkbox",
+          "description": "If selected, if a request for a  specific loaction/time fails, the component continues to run and ends with a success. If not, the component fails",
+          "default": true,
+          "propertyOrder": 70,
+          "options": {
+            "dependencies": {
+              "fetch_parameter_from": "input_table"
+            }
+          }
+        }
+      },
+      "propertyOrder": 20
+    },
+    "destination_settings": {
+      "type": "object",
+      "title": "Destination Settings",
+      "properties": {
+        "load_type": {
+          "type": "string",
+          "enum": [
+            "full_load",
+            "incremental_load"
+          ],
+          "options": {
+            "enum_titles": [
+              "Full Load",
+              "Incremental Load"
+            ]
+          },
+          "default": "incremental_load",
+          "format": "checkbox",
+          "title": "Load Type",
+          "description": "If Full load is used, the destination table will be overwritten every run. If incremental load is used, data will be upserted into the destination table.",
+          "propertyOrder": 20
+        }
+      },
+      "propertyOrder": 30
     }
   }
 }

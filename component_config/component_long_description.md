@@ -1,1 +1,1 @@
-This component enables users to extract weather data from the Weather API in various modes.
+This component enables users to extract forecast and historical weather data from the [Weather API](https://weatherapi.com).

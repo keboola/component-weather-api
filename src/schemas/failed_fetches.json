@@ -1,0 +1,25 @@
+{
+  "name": "failed_fetches",
+  "description": "",
+  "primary_keys": [
+    "parameters",
+    "fetching_timestamp"
+  ],
+  "fields": [
+    {
+      "name": "parameters",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "error",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "fetching_timestamp",
+      "description": "",
+      "base_type": "INTEGER"
+    }
+  ]
+}

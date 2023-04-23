@@ -1,0 +1,76 @@
+{
+  "name": "weather_astronomical",
+  "description": "",
+  "primary_keys": [
+    "latitude",
+    "longitude",
+    "date"
+  ],
+  "fields": [
+    {
+      "name": "latitude",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
+      "name": "longitude",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
+      "name": "date",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "location_name",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "sunrise",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "sunset",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "moonrise",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "moonset",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "moon_phase",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "moon_illumination",
+      "description": "",
+      "base_type": "STRING"
+    },
+    {
+      "name": "is_moon_up",
+      "description": "",
+      "base_type": "INTEGER"
+    },
+    {
+      "name": "is_sun_up",
+      "description": "",
+      "base_type": "INTEGER"
+    },
+    {
+      "name": "extraction_timestamp",
+      "description": "",
+      "base_type": "STRING"
+    }
+  ]
+}
