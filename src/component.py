@@ -128,7 +128,7 @@ class Component(ComponentBase):
             try:
                 historical_date = self.parse_date(row['historical_date'])
             except UserException:
-                historical_date = None
+                historical_date = row['historical_date']
             fetching_parameters["historical_date"] = historical_date
 
         return fetching_parameters
