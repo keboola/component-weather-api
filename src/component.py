@@ -27,6 +27,7 @@ class Component(ComponentBase):
         self._init_table_handlers()
 
         for fetching_parameters in self.get_fetching_parameters():
+            logging.info(f"Fetching data with parameters : {fetching_parameters}")
             self.fetch_and_write_data_with_parameters(fetching_parameters)
 
         self.close_table_handlers()
@@ -112,7 +113,11 @@ class Component(ComponentBase):
                 fetching_parameters = {"location": location}
 
                 if "forecast_days" in row and request_type == RequestType.FORECAST:
-                    fetching_parameters["forecast_days"] = int(row['forecast_days'])
+                    try:
+                        fetching_parameters["forecast_days"] = int(row['forecast_days'])
+                    except ValueError:
+                        logging.warning(f"Could not parse {row['forecast_days']} to int, falling back to default '10'")
+                        fetching_parameters["forecast_days"] = 10
                 elif request_type == RequestType.FORECAST:
                     fetching_parameters["forecast_days"] = 10
 
