@@ -97,37 +97,41 @@ class Component(ComponentBase):
         yield fetching_parameters
 
     def get_fetching_parameters_from_input_table(self) -> Iterator:
-        # TODO Refactor
         input_table = self._get_single_input_table()
-        request_type = self._configuration.fetching_settings.request_type
         with open(input_table.full_path) as in_table:
             reader = csv.DictReader(in_table)
             for row in reader:
-                if "location" in row:
-                    location = row["location"]
-                elif "latitude" in row and "longitude" in row:
-                    location = f"{row['latitude']},{row['longitude']}"
-                else:
-                    raise UserException("Input Table Error : Input table must contain either a 'location' column "
-                                        "or a 'latitude' and 'longitude' column")
-                fetching_parameters = {"location": location}
+                yield self.process_input_row(row)
 
-                if "forecast_days" in row and request_type == RequestType.FORECAST:
-                    try:
-                        fetching_parameters["forecast_days"] = int(row['forecast_days'])
-                    except ValueError:
-                        logging.warning(f"Could not parse {row['forecast_days']} to int, falling back to default '10'")
-                        fetching_parameters["forecast_days"] = 10
-                elif request_type == RequestType.FORECAST:
-                    fetching_parameters["forecast_days"] = 10
+    def process_input_row(self, row: dict):
+        request_type = self._configuration.fetching_settings.request_type
 
-                if "historical_date" in row and request_type == RequestType.HISTORY:
-                    try:
-                        historical_date = self.parse_date(row['historical_date'])
-                    except UserException:
-                        historical_date = None
-                    fetching_parameters["historical_date"] = historical_date
-                yield fetching_parameters
+        if "location" in row:
+            location = row["location"]
+        elif "latitude" in row and "longitude" in row:
+            location = f"{row['latitude']},{row['longitude']}"
+        else:
+            raise UserException("Input Table Error : Input table must contain either a 'location' column "
+                                "or a 'latitude' and 'longitude' column")
+        fetching_parameters = {"location": location}
+
+        if "forecast_days" in row and request_type == RequestType.FORECAST:
+            try:
+                fetching_parameters["forecast_days"] = int(row['forecast_days'])
+            except ValueError:
+                logging.warning(f"Could not parse {row['forecast_days']} to int, falling back to default '10'")
+                fetching_parameters["forecast_days"] = 10
+        elif request_type == RequestType.FORECAST:
+            fetching_parameters["forecast_days"] = 10
+
+        if "historical_date" in row and request_type == RequestType.HISTORY:
+            try:
+                historical_date = self.parse_date(row['historical_date'])
+            except UserException:
+                historical_date = None
+            fetching_parameters["historical_date"] = historical_date
+
+        return fetching_parameters
 
     def _get_single_input_table(self) -> TableDefinition:
         input_tables = self.get_input_tables_definitions()
