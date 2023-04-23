@@ -12,7 +12,7 @@ You should subscribe to the plan based on your expected consumption.
 ## Configuration
 
 * Authentication (authentication) :
-    * Api Token (#api_token) : Pirate Weather API token
+    * Api Token (#api_token) : Weather API token
 * Fetching Settings (fetching_settings) :
     * Fetch Parameter From (fetch_parameter_from) : Choose one of ['config_parameters', 'input_table'], if 'config_parameters' the fetching parameters should be set and will be used for fetching. 
 The 'input_table' is to be used if you want to use an input table to fetch data with a list of parameters, see the input table section for more information

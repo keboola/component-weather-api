@@ -11,7 +11,7 @@
           "type": "string",
           "format": "password",
           "title": "API Token",
-          "description": "API token from you Pirate Weather account",
+          "description": "API token from you Weather API account",
           "propertyOrder": 10
         },
         "test_connection": {
