@@ -1,0 +1,1 @@
+Weather API is a service that provides data of Real Time, Forecasted, Future, Marine and Historical Weather

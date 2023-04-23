@@ -1,0 +1,1 @@
+This component enables users to extract weather data from the Weather API in various modes.
