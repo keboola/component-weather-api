@@ -9,7 +9,7 @@ from keboola.component.dao import TableDefinition
 from keboola.component.exceptions import UserException
 
 from client import WeatherApiClient, WeatherApiClientException
-from configuration import Configuration, FetchParameterFrom, RequestType
+from configuration import Configuration, FetchParameterFrom, RequestType, LoadType
 from table_handler import TableHandler
 
 
@@ -50,6 +50,10 @@ class Component(ComponentBase):
     def _init_table_handler_by_schema_name(self, schema_name: str) -> None:
         schema = self.get_table_schema_by_name(schema_name)
         table_definition = self.create_out_table_definition_from_schema(schema)
+
+        if self._configuration.destination_settings.load_type == LoadType.INCREMENTAL_LOAD:
+            table_definition.incremental = True
+
         file = open(table_definition.full_path, 'w')
         writer = csv.DictWriter(file, fieldnames=table_definition.columns)
         self._table_handlers[schema_name] = TableHandler(table_definition, file, writer)
