@@ -3,6 +3,6 @@ keboola.utils
 keboola.http-client
 mock~=5.0.2
 freezegun~=1.2.2
-https://github.com/bakobako/dataconf/zipball/main#egg=dataconf
+dataconf==2.2.1
 requests==2.28.2
 dateparser==1.1.8

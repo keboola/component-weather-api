@@ -1,6 +1,6 @@
 import dataclasses
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 from typing import List
 
@@ -78,6 +78,8 @@ class LoadType(str, Enum):
 
 @dataclass
 class DestinationSettings(ConfigurationBase):
+    primary_key: list[str] = field(default_factory=list)
+    propagate_columns: list[str] = field(default_factory=list)
     load_type: LoadType = LoadType.INCREMENTAL_LOAD
 
 

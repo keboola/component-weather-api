@@ -1,7 +1,7 @@
 import csv
 import logging
 import time
-from typing import Iterator
+from typing import Iterator, Tuple
 
 import dateparser
 from keboola.component.base import ComponentBase, sync_action
@@ -26,9 +26,9 @@ class Component(ComponentBase):
         self._init_client()
         self._init_table_handlers()
 
-        for fetching_parameters in self.get_fetching_parameters():
+        for fetching_parameters, propagated_columns in self.get_fetching_parameters_and_propagated_columns():
             logging.info(f"Fetching data with parameters : {fetching_parameters}")
-            self.fetch_and_write_data_with_parameters(fetching_parameters)
+            self.fetch_and_write_data_with_parameters(fetching_parameters, propagated_columns)
 
         self.close_table_handlers()
 
@@ -54,8 +54,15 @@ class Component(ComponentBase):
         if self._configuration.destination_settings.load_type == LoadType.INCREMENTAL_LOAD:
             table_definition.incremental = True
 
+        if self._configuration.destination_settings.propagate_columns:
+            table_definition.columns.extend(self._configuration.destination_settings.propagate_columns)
+
+        if self._configuration.destination_settings.primary_key:
+            table_definition.primary_key.extend(self._configuration.destination_settings.propagate_columns)
+
         file = open(table_definition.full_path, 'w')
         writer = csv.DictWriter(file, fieldnames=table_definition.columns)
+
         self._table_handlers[schema_name] = TableHandler(table_definition, file, writer)
 
     def close_table_handlers(self) -> None:
@@ -63,26 +70,26 @@ class Component(ComponentBase):
             self._table_handlers[table_handler].close()
             self.write_manifest(self._table_handlers[table_handler].table_definition)
 
-    def fetch_and_write_data_with_parameters(self, fetching_parameters: dict) -> None:
+    def fetch_and_write_data_with_parameters(self, fetching_parameters: dict, propagated_columns: dict) -> None:
         request_type = self._configuration.fetching_settings.request_type
         try:
             if request_type == RequestType.HISTORY:
-                self.fetch_and_write_history_data(**fetching_parameters)
+                self.fetch_and_write_history_data(propagated_columns, **fetching_parameters)
             elif request_type == RequestType.FORECAST:
-                self.fetch_and_write_forecast_data(**fetching_parameters)
+                self.fetch_and_write_forecast_data(propagated_columns, **fetching_parameters)
         except (TypeError, UserException, ValueError) as failed_fetch_exc:
             if self._configuration.fetching_settings.continue_on_failure:
                 self.write_error(fetching_parameters, failed_fetch_exc)
             else:
                 raise UserException(failed_fetch_exc) from failed_fetch_exc
 
-    def get_fetching_parameters(self) -> Iterator:
+    def get_fetching_parameters_and_propagated_columns(self) -> Iterator:
         if self.fetch_from_config_params():
-            return self.get_fetching_parameters_from_configuration()
+            return self.get_fetching_parameters_from_configuration(), {}
         else:
-            return self.get_fetching_parameters_from_input_table()
+            return self.get_fetching_parameters_and_propagated_columns_from_input_table()
 
-    def fetch_from_config_params(self):
+    def fetch_from_config_params(self) -> bool:
         return self._configuration.fetching_settings.fetch_parameter_from == FetchParameterFrom.CONFIG_PARAMETERS
 
     def get_fetching_parameters_from_configuration(self) -> Iterator:
@@ -100,14 +107,14 @@ class Component(ComponentBase):
             fetching_parameters["historical_date"] = historical_date
         yield fetching_parameters
 
-    def get_fetching_parameters_from_input_table(self) -> Iterator:
+    def get_fetching_parameters_and_propagated_columns_from_input_table(self) -> Iterator:
         input_table = self._get_single_input_table()
         with open(input_table.full_path) as in_table:
             reader = csv.DictReader(in_table)
             for row in reader:
                 yield self.process_input_row(row)
 
-    def process_input_row(self, row: dict):
+    def process_input_row(self, row: dict) -> Tuple[dict, dict]:
         request_type = self._configuration.fetching_settings.request_type
 
         if "location" in row:
@@ -135,7 +142,9 @@ class Component(ComponentBase):
                 historical_date = row['historical_date']
             fetching_parameters["historical_date"] = historical_date
 
-        return fetching_parameters
+        propagated_columns = {col: row[col] for col in self._configuration.destination_settings.propagate_columns}
+
+        return fetching_parameters, propagated_columns
 
     def _get_single_input_table(self) -> TableDefinition:
         input_tables = self.get_input_tables_definitions()
@@ -143,9 +152,9 @@ class Component(ComponentBase):
             raise UserException("Input Table Error : Only 1 table should be specified in the input mapping")
         return input_tables[0]
 
-    def fetch_and_write_history_data(self, location: str, historical_date: str) -> None:
+    def fetch_and_write_history_data(self, propagated_columns, location: str, historical_date: str) -> None:
         historical_forecast = self.get_history_data(location, historical_date)
-        self.write_forecast_data(historical_forecast)
+        self.write_forecast_data(historical_forecast, propagated_columns)
 
     def get_history_data(self, location: str, historical_date: str) -> dict:
         try:
@@ -154,9 +163,9 @@ class Component(ComponentBase):
             message = self.get_api_exception_message(weather_api_exc)
             raise UserException(message) from weather_api_exc
 
-    def fetch_and_write_forecast_data(self, location: str, forecast_days: int) -> None:
+    def fetch_and_write_forecast_data(self, propagated_columns, location: str, forecast_days: int) -> None:
         forecast = self.get_forecast_data(location, forecast_days)
-        self.write_forecast_data(forecast)
+        self.write_forecast_data(forecast, propagated_columns)
 
     def get_forecast_data(self, location: str, forecast_days: int) -> dict:
         try:
@@ -179,8 +188,18 @@ class Component(ComponentBase):
         except (IndexError, KeyError):
             return f"Error : {weather_api_exc}"
 
-    def write_forecast_data(self, forecast: dict) -> None:
+    @staticmethod
+    def add_dict_to_list_of_dicts(list_of_dicts: list[dict], dict_to_add: dict) -> None:
+        for d in list_of_dicts:
+            d.update(dict_to_add)
+
+    def write_forecast_data(self, forecast: dict, propagated_columns: dict) -> None:
         daily_data, hourly_data, astro_data = self.parse_forecast_data(forecast)
+
+        self.add_dict_to_list_of_dicts(daily_data, propagated_columns)
+        self.add_dict_to_list_of_dicts(hourly_data, propagated_columns)
+        self.add_dict_to_list_of_dicts(astro_data, propagated_columns)
+
         self._table_handlers["weather_daily"].write_rows(daily_data)
         self._table_handlers["weather_hourly"].write_rows(hourly_data)
         self._table_handlers["weather_astronomical"].write_rows(astro_data)
@@ -249,6 +268,18 @@ class Component(ComponentBase):
             self.client.get_forecast("Paris", 1)
         except WeatherApiClientException as weather_api_exc:
             raise UserException("Authorization Error : Invalid API token") from weather_api_exc
+
+    @sync_action('load_table_columns')
+    def load_available_columns(self):
+        if not self.configuration.tables_input_mapping:
+            raise UserException("No input table specified. Please provide one input table in the input mapping!")
+        input_table = self.configuration.tables_input_mapping[0]
+        return [{"value": c, "label": c} for c in input_table.columns]
+
+    @sync_action('load_possible_primary_keys')
+    def load_possible_primary_keys(self):
+        self._init_configuration()
+        return [{"value": c, "label": c} for c in self._configuration.destination_settings.propagate_columns]
 
 
 """

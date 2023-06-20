@@ -143,6 +143,42 @@
           "title": "Load Type",
           "description": "If Full load is used, the destination table will be overwritten every run. If incremental load is used, data will be upserted into the destination table.",
           "propertyOrder": 20
+        },
+        "propagate_columns": {
+          "type": "array",
+          "format": "select",
+          "items": {
+            "enum": [],
+            "type": "string"
+          },
+          "title": "Propagate Columns",
+          "options": {
+            "async": {
+              "label": "Re-load Columns",
+              "action": "load_table_columns"
+            }
+          },
+          "description": "List of columns from the input table you wish to propagate to the results",
+          "uniqueItems": true,
+          "propertyOrder": 70
+        },
+        "primary_key": {
+          "type": "array",
+          "format": "select",
+          "items": {
+            "enum": [],
+            "type": "string"
+          },
+          "title": "Primary Keys",
+          "options": {
+            "async": {
+              "label": "Re-load Keys",
+              "action": "load_possible_primary_keys"
+            }
+          },
+          "description": "List of propagated columns that you want to be set as additional primary keys",
+          "uniqueItems": true,
+          "propertyOrder": 80
         }
       },
       "propertyOrder": 30
