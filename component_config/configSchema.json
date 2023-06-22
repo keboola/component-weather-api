@@ -144,41 +144,31 @@
           "description": "If Full load is used, the destination table will be overwritten every run. If incremental load is used, data will be upserted into the destination table.",
           "propertyOrder": 20
         },
-        "propagate_columns": {
+        "propagated_primary_key_columns": {
+          "propertyOrder": 50,
           "type": "array",
-          "format": "select",
           "items": {
-            "enum": [],
             "type": "string"
           },
-          "title": "Propagate Columns",
+          "format": "select",
           "options": {
-            "async": {
-              "label": "Re-load Columns",
-              "action": "load_table_columns"
-            }
+            "tags": true
           },
-          "description": "List of columns from the input table you wish to propagate to the results",
-          "uniqueItems": true,
-          "propertyOrder": 70
+          "description": "List of primary key columns from the input table you wish to propagate to the results as primary keys",
+          "uniqueItems": true
         },
-        "primary_key": {
+        "propagated_columns": {
+          "propertyOrder": 60,
           "type": "array",
-          "format": "select",
           "items": {
-            "enum": [],
             "type": "string"
           },
-          "title": "Primary Keys",
+          "format": "select",
           "options": {
-            "async": {
-              "label": "Re-load Keys",
-              "action": "load_possible_primary_keys"
-            }
+            "tags": true
           },
-          "description": "List of propagated columns that you want to be set as additional primary keys",
-          "uniqueItems": true,
-          "propertyOrder": 80
+          "description": "List of columns from the input table you wish to propagate to the results.",
+          "uniqueItems": true
         }
       },
       "propertyOrder": 30

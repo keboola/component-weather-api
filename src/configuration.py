@@ -78,8 +78,8 @@ class LoadType(str, Enum):
 
 @dataclass
 class DestinationSettings(ConfigurationBase):
-    primary_key: list[str] = field(default_factory=list)
-    propagate_columns: list[str] = field(default_factory=list)
+    propagated_primary_key_columns: list[str] = field(default_factory=list)
+    propagated_columns: list[str] = field(default_factory=list)
     load_type: LoadType = LoadType.INCREMENTAL_LOAD
 
 

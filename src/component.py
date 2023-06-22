@@ -54,11 +54,14 @@ class Component(ComponentBase):
         if self._configuration.destination_settings.load_type == LoadType.INCREMENTAL_LOAD:
             table_definition.incremental = True
 
-        if self._configuration.destination_settings.propagate_columns:
-            table_definition.columns.extend(self._configuration.destination_settings.propagate_columns)
+        if self._configuration.destination_settings.propagated_columns:
+            table_definition.columns.extend(self._configuration.destination_settings.propagated_columns)
 
-        if self._configuration.destination_settings.primary_key:
-            table_definition.primary_key.extend(self._configuration.destination_settings.propagate_columns)
+        if self._configuration.destination_settings.propagated_primary_key_columns:
+            table_definition.columns.extend(self._configuration.destination_settings.propagated_primary_key_columns)
+
+        if self._configuration.destination_settings.propagated_primary_key_columns:
+            table_definition.primary_key.extend(self._configuration.destination_settings.propagated_primary_key_columns)
 
         file = open(table_definition.full_path, 'w')
         writer = csv.DictWriter(file, fieldnames=table_definition.columns)
@@ -142,9 +145,13 @@ class Component(ComponentBase):
                 historical_date = row['historical_date']
             fetching_parameters["historical_date"] = historical_date
 
-        propagated_columns = {col: row[col] for col in self._configuration.destination_settings.propagate_columns}
+        propagated_columns = {col: row[col] for col in self._configuration.destination_settings.propagated_columns}
+        propagated_primary_key_columns = {col: row[col] for col in
+                                          self._configuration.destination_settings.propagated_primary_key_columns}
 
-        return fetching_parameters, propagated_columns
+        all_propagated_columns = propagated_columns | propagated_primary_key_columns
+
+        return fetching_parameters, all_propagated_columns
 
     def _get_single_input_table(self) -> TableDefinition:
         input_tables = self.get_input_tables_definitions()
@@ -268,18 +275,6 @@ class Component(ComponentBase):
             self.client.get_forecast("Paris", 1)
         except WeatherApiClientException as weather_api_exc:
             raise UserException("Authorization Error : Invalid API token") from weather_api_exc
-
-    @sync_action('load_table_columns')
-    def load_available_columns(self):
-        if not self.configuration.tables_input_mapping:
-            raise UserException("No input table specified. Please provide one input table in the input mapping!")
-        input_table = self.configuration.tables_input_mapping[0]
-        return [{"value": c, "label": c} for c in input_table.columns]
-
-    @sync_action('load_possible_primary_keys')
-    def load_possible_primary_keys(self):
-        self._init_configuration()
-        return [{"value": c, "label": c} for c in self._configuration.destination_settings.propagate_columns]
 
 
 """
