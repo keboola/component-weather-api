@@ -35,6 +35,18 @@ class Component(ComponentBase):
     def _init_configuration(self) -> None:
         self.validate_configuration_parameters(Configuration.get_dataclass_required_parameters())
         self._configuration: Configuration = Configuration.load_from_dict(self.configuration.parameters)
+        self._validate_configuration()
+
+    def _validate_configuration(self):
+
+        input_table = self._get_single_input_table()
+        prop_columns = self._configuration.destination_settings.propagated_columns \
+                       + self._configuration.destination_settings.propagated_primary_key_columns  # noqa
+
+        missing_propagated = [col for col in prop_columns if col not in input_table]
+        if missing_propagated:
+            raise UserException(f"Some columns listed in propagated / primary key columns "
+                                f"are not present in the source table: {missing_propagated}")
 
     def _init_client(self) -> None:
         self.client = WeatherApiClient(self._configuration.authentication.pswd_api_token)
@@ -86,16 +98,16 @@ class Component(ComponentBase):
             else:
                 raise UserException(failed_fetch_exc) from failed_fetch_exc
 
-    def get_fetching_parameters_and_propagated_columns(self) -> Iterator:
+    def get_fetching_parameters_and_propagated_columns(self) -> Iterator[tuple[dict, dict]]:
         if self.fetch_from_config_params():
-            return self.get_fetching_parameters_from_configuration(), {}
+            return self.get_fetching_parameters_from_configuration()
         else:
             return self.get_fetching_parameters_and_propagated_columns_from_input_table()
 
     def fetch_from_config_params(self) -> bool:
         return self._configuration.fetching_settings.fetch_parameter_from == FetchParameterFrom.CONFIG_PARAMETERS
 
-    def get_fetching_parameters_from_configuration(self) -> Iterator:
+    def get_fetching_parameters_from_configuration(self) -> Iterator[tuple[dict, dict]]:
         request_type = self._configuration.fetching_settings.request_type
         location = self._configuration.fetching_settings.location_query
         fetching_parameters = {"location": location}
@@ -108,7 +120,7 @@ class Component(ComponentBase):
             historical_date_raw = self._configuration.fetching_settings.historical_date
             historical_date = self.parse_date(historical_date_raw)
             fetching_parameters["historical_date"] = historical_date
-        yield fetching_parameters
+        yield fetching_parameters, {}
 
     def get_fetching_parameters_and_propagated_columns_from_input_table(self) -> Iterator:
         input_table = self._get_single_input_table()
