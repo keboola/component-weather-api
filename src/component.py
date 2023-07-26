@@ -35,15 +35,15 @@ class Component(ComponentBase):
     def _init_configuration(self) -> None:
         self.validate_configuration_parameters(Configuration.get_dataclass_required_parameters())
         self._configuration: Configuration = Configuration.load_from_dict(self.configuration.parameters)
-        self._validate_configuration()
+        self._validate_input_configuration()
 
-    def _validate_configuration(self):
+    def _validate_input_configuration(self):
 
         input_table = self._get_single_input_table()
         prop_columns = self._configuration.destination_settings.propagated_columns \
                        + self._configuration.destination_settings.propagated_primary_key_columns  # noqa
 
-        missing_propagated = [col for col in prop_columns if col not in input_table]
+        missing_propagated = [col for col in prop_columns if col not in input_table.columns]
         if missing_propagated:
             raise UserException(f"Some columns listed in propagated / primary key columns "
                                 f"are not present in the source table: {missing_propagated}")
