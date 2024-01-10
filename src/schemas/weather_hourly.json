@@ -99,6 +99,11 @@
       "base_type": "FLOAT"
     },
     {
+      "name": "snow_cm",
+      "description": "",
+      "base_type": "FLOAT"
+    },
+    {
       "name": "humidity",
       "description": "",
       "base_type": "INTEGER"
