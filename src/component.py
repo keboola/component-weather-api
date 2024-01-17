@@ -7,6 +7,7 @@ import dateparser
 from keboola.component.base import ComponentBase, sync_action
 from keboola.component.dao import TableDefinition
 from keboola.component.exceptions import UserException
+from keboola.csvwriter import ElasticDictWriter
 
 from client import WeatherApiClient, WeatherApiClientException
 from configuration import Configuration, FetchParameterFrom, RequestType, LoadType
@@ -14,10 +15,11 @@ from table_handler import TableHandler
 
 
 class Component(ComponentBase):
+
     def __init__(self):
         self._configuration: Configuration
         self.client: WeatherApiClient
-        self._table_handlers = {}
+        self._table_handlers: dict[str, TableHandler] = {}
         self.extraction_start = int(time.time())
         super().__init__()
 
@@ -50,18 +52,24 @@ class Component(ComponentBase):
     def _init_table_handler_by_schema_name(self, schema_name: str) -> None:
         schema = self.get_table_schema_by_name(schema_name)
         table_definition = self.create_out_table_definition_from_schema(schema)
+        # get previous columns from state file
+        last_state = self.get_state_file()
+        if last_state and last_state.get("last_columns", {}).get('schema_name'):
+            table_definition.columns = last_state["last_columns"][schema_name]
 
         if self._configuration.destination_settings.load_type == LoadType.INCREMENTAL_LOAD:
             table_definition.incremental = True
 
-        file = open(table_definition.full_path, 'w')
-        writer = csv.DictWriter(file, fieldnames=table_definition.columns)
-        self._table_handlers[schema_name] = TableHandler(table_definition, file, writer)
+        writer = ElasticDictWriter(table_definition.full_path, fieldnames=table_definition.columns)
+        self._table_handlers[schema_name] = TableHandler(table_definition, writer)
 
     def close_table_handlers(self) -> None:
+        custom_columns = {}
         for table_handler in self._table_handlers:
             self._table_handlers[table_handler].close()
             self.write_manifest(self._table_handlers[table_handler].table_definition)
+            custom_columns[table_handler] = self._table_handlers[table_handler].table_definition.columns
+        self.write_state_file({"last_columns": custom_columns})
 
     def fetch_and_write_data_with_parameters(self, fetching_parameters: dict) -> None:
         request_type = self._configuration.fetching_settings.request_type
