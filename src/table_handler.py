@@ -1,17 +1,15 @@
-from csv import DictWriter
-from io import TextIOWrapper
-
 from keboola.component.dao import TableDefinition
+from keboola.csvwriter import ElasticDictWriter
 
 
 class TableHandler:
-    def __init__(self, table_definition: TableDefinition, file: TextIOWrapper, writer: DictWriter):
+    def __init__(self, table_definition: TableDefinition, writer: ElasticDictWriter):
         self.table_definition = table_definition
-        self.file = file
         self.writer = writer
 
     def close(self) -> None:
-        self.file.close()
+        self.writer.close()
+        self.table_definition.columns = self.writer.fieldnames
 
     def write_rows(self, rows: list[dict]) -> None:
         self.writer.writerows(rows)
