@@ -1,12 +1,12 @@
 # Weather API extractor
 
-[Weather API](https://weatherapi.com) is a service that provides data of Real Time, Forecasted, Future, Marine and Historical Weather
+[Weather API](https://www.weatherapi.com) is a service that provides data of Real Time, Forecasted, Future, Marine and Historical Weather
 
-This component enables users to extract forecast and historical weather data from the [Weather API](https://weatherapi.com).
+This component enables users to extract forecast and historical weather data from the [Weather API](https://www.weatherapi.com).
 
 ## Prerequisites
 
-To utilize the [Weather API](https://weatherapi.com) you must first register and get an API token.
+To utilize the [Weather API](https://www.weatherapi.com) you must first register and get an API token.
 You should subscribe to the plan based on your expected consumption.
 
 ## Configuration

@@ -1,5 +1,5 @@
-[Weather API](https://weatherapi.com) is a service that provides data of Real Time, Forecasted, Future, Marine and Historical Weather
-This component enables users to extract forecast and historical weather data from the [Weather API](https://weatherapi.com).
+[Weather API](https://www.weatherapi.com) is a service that provides data of Real Time, Forecasted, Future, Marine and Historical Weather
+This component enables users to extract forecast and historical weather data from the [Weather API](https://www.weatherapi.com).
 
 If the **Parameters From** is set to **Configuration Parameters** set the fetching parameters in the configuration parameters.
 

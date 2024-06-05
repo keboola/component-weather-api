@@ -1,4 +1,4 @@
-This component enables users to extract forecast and historical weather data from the [Weather API](https://weatherapi.com).
+This component enables users to extract forecast and historical weather data from the [Weather API](https://www.weatherapi.com).
 
 Weather API is offered as a free and paid service.
 
