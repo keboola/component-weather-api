@@ -164,6 +164,7 @@ class Component(ComponentBase):
 
     def fetch_and_write_forecast_data(self, location: str, forecast_days: int) -> None:
         forecast = self.get_forecast_data(location, forecast_days)
+        logging.info(forecast)
         self.write_forecast_data(forecast)
 
     def get_forecast_data(self, location: str, forecast_days: int) -> dict:
